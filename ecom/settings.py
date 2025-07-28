@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 #from dotenv import load_dotenv
 
@@ -7,7 +8,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load our environmental variables
-# load_dotenv()
+load_dotenv()
+
 
 
 
@@ -24,7 +26,14 @@ SECRET_KEY = 'django-insecure-x4m$gfeda-r+)u05g*bzm%8#_vz&8-wl^3epo45gqi#_eqwvtq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://djangotest.com', 'djangotest.com', 'django-ecommerce-production-81b6.up.railway.app', 'https://django-ecommerce-production-81b6.up.railway.app']
+ALLOWED_HOSTS = [
+    '127.0.0.1', # For local development
+    'localhost', # For local development
+    'https://djangotest.com', # Custom domain (no https)
+    'djangotest.com', 
+    'django-ecommerce-production-81b6.up.railway.app', 
+    'https://django-ecommerce-production-81b6.up.railway.app'
+]
 CSRF_TRUSTED_ORIGINS = ['https://djangotest.com', 'https://django-ecommerce-production-81b6.up.railway.app']
 
 # Application definition
@@ -88,8 +97,8 @@ DATABASES = {
         'NAME': 'railway',
         'USER': 'postgres',
         'PASSWORD': DB_PASSWORD_YO,
-        'HOST': 'viaduct.proxy.rlwy.net',
-        'PORT': '23278',
+        'HOST': 'caboose.proxy.rlwy.net',
+        'PORT': '27204',
         
     }
 }
