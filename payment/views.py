@@ -6,6 +6,10 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from store.models import Product, Profile
 import datetime
+from django.core.mail import get_connection, send_mail
+from django.conf import settings
+import ssl, certifi
+
 
 # Import Some Paypal Stuff
 from django.urls import reverse
@@ -102,14 +106,31 @@ def process_order(request):
 
 		# Get Billing Info from the last page
 		payment_form = PaymentForm(request.POST or None)
+		if payment_form.is_valid():
+			payment_data = payment_form.cleaned_data
+		else:
+			messages.error(request, "Invalid payment details")
+			return redirect("checkout")
+
 		# Get Shipping Session Data
 		my_shipping = request.session.get('my_shipping')
 
 		# Gather Order Info
 		full_name = my_shipping['shipping_full_name']
 		email = my_shipping['shipping_email']
+
 		# Create Shipping Address from session info
-		shipping_address = f"{my_shipping['shipping_address1']}\n{my_shipping['shipping_address2']}\n{my_shipping['shipping_city']}\n{my_shipping['shipping_state']}\n{my_shipping['shipping_zipcode']}\n{my_shipping['shipping_country']}"
+		shipping_address = f"{my_shipping['shipping_address']}\n{my_shipping['shipping_country']}\n{my_shipping['shipping_county']}\n{my_shipping['shipping_constituency']}"
+
+		shipping_data = {
+		"Full Name": my_shipping.get("shipping_full_name"),
+		"Email": my_shipping.get("shipping_email"),
+		"Address": my_shipping.get("shipping_address"),
+		"Country": my_shipping.get("shipping_country"),
+		"County": my_shipping.get("shipping_county"),
+		"Constituency": my_shipping.get("shipping_constituency"),
+	}
+
 		amount_paid = totals
 
 		# Create an Order
@@ -141,6 +162,72 @@ def process_order(request):
 						# Create order item
 						create_order_item = OrderItem(order_id=order_id, product_id=product_id, user=user, quantity=value, price=price)
 						create_order_item.save()
+			
+			# Prepare email content
+			subject = "New Order Received"
+			message = f"""
+			You have a new order!
+
+			Order ID: {order_id}
+			"""
+
+			# Add Shipping Information
+			message += "\nShipping Information:\n"
+			for field, value in shipping_data.items():
+				message += f"{field}: {value}\n"
+
+			# Add Contact (PaymentForm) Information
+			message += "\nContact Information:\n"
+			for field, value in payment_data.items():
+				message += f"{field.replace('_', ' ').title()}: {value}\n"
+
+			# Add Order Summary
+			message += "\nOrder Summary:\n"
+			for product in cart_products():
+				for key, value in quantities().items():
+					if int(key) == product.id:
+						price = product.sale_price if product.is_sale else product.price
+						message += f"- {product.name} (x{value}) @ {price} each\n"
+
+			message += "\nThank you!"
+
+
+			# Send email
+			send_mail(
+				subject,
+				message,
+				settings.DEFAULT_FROM_EMAIL,  # Make sure you set this in settings.py
+				["lilflame694@gmail.com"],     # Replace with your receiving email
+				fail_silently=False,
+			)
+			# Send confirmation email to customer
+			customer_subject = "Order Confirmation"
+			customer_message = f"""
+			Hi {full_name},
+
+			Thank you for your order!
+
+			Your order (ID: {order_id}) has been received and will be processed.
+			We will deliver it within 2 days.
+
+			Order Summary:
+			"""
+
+			for product in cart_products():
+				for key, value in quantities().items():
+					if int(key) == product.id:
+						price = product.sale_price if product.is_sale else product.price
+						customer_message += f"- {product.name} (x{value}) @ {price} each\n"
+
+			customer_message += "\nThank you for shopping with us!"
+
+			send_mail(
+				customer_subject,
+				customer_message,
+				settings.DEFAULT_FROM_EMAIL,
+				[email],  # send to the customer
+				fail_silently=False,
+			)
 
 			# Delete our cart
 			for key in list(request.session.keys()):
@@ -156,8 +243,6 @@ def process_order(request):
 
 			messages.success(request, "Order Placed!")
 			return redirect('home')
-
-			
 
 		else:
 			# not logged in

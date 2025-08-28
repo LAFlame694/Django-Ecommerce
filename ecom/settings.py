@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
 #from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1', # For local development
     'localhost', # For local development
-    'https://djangotest.com', # Custom domain (no https)
+    'djangotest.com', # Custom domain (no https)
     'djangotest.com', 
     'django-ecommerce-production-81b6.up.railway.app', 
     'https://django-ecommerce-production-81b6.up.railway.app'
@@ -91,14 +90,14 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': DB_PASSWORD_YO,
-        'HOST': 'caboose.proxy.rlwy.net',
-        'PORT': '27204',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+        #'ENGINE': 'django.db.backends.postgresql',
+        #'NAME': 'railway',
+        #'USER': 'postgres',
+        #'PASSWORD': DB_PASSWORD_YO,
+        #'HOST': 'caboose.proxy.rlwy.net',
+        #'PORT': '27204',
         
     }
 }
@@ -161,3 +160,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 PAYPAL_TEST = True
 
 PAYPAL_RECEIVER_EMAIL = 'business@codemytest.com' # Business Sandbox account
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'lilflame694@gmail.com'
+EMAIL_HOST_PASSWORD = 'yriqwywxywctinjw'  # Use App Password if Gmail
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
