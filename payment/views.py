@@ -156,13 +156,23 @@ def process_order(request):
 				else:
 					price = product.price
 
-				# Get quantity
-				for key,value in quantities().items():
-					if int(key) == product.id:
-						# Create order item
-						create_order_item = OrderItem(order_id=order_id, product_id=product_id, user=user, quantity=value, price=price)
-						create_order_item.save()
-			
+				# Get quantity + size
+			for key, value in quantities().items():
+				if int(key) == product.id:
+					qty = value['quantity']   # ✅ extract integer
+					size = value['size']      # ✅ extract shoe size
+
+					# Create order item
+					create_order_item = OrderItem(
+						order_id=order_id,
+						product_id=product_id,
+						user=user,
+						quantity=qty,          # ✅ now just number
+						size=size,             # ✅ store size
+						price=price
+					)
+					create_order_item.save()
+
 			# Prepare email content
 			subject = "New Order Received"
 			message = f"""
@@ -191,15 +201,26 @@ def process_order(request):
 
 			message += "\nThank you!"
 
+			email_connection = get_connection(
+				backend=settings.EMAIL_BACKEND,
+				host=settings.EMAIL_HOST,
+				port=settings.EMAIL_PORT,
+				username=settings.EMAIL_HOST_USER,
+				password=settings.EMAIL_HOST_PASSWORD,
+				use_tls=settings.EMAIL_USE_TLS,
+				ssl_context=ssl.create_default_context(cafile=certifi.where())
+			)
 
-			# Send email
+			# Send email to admin
 			send_mail(
 				subject,
 				message,
-				settings.DEFAULT_FROM_EMAIL,  # Make sure you set this in settings.py
-				["lilflame694@gmail.com"],     # Replace with your receiving email
+				settings.DEFAULT_FROM_EMAIL,
+				["lilflame694@gmail.com"],
 				fail_silently=False,
+				connection=email_connection
 			)
+
 			# Send confirmation email to customer
 			customer_subject = "Order Confirmation"
 			customer_message = f"""
@@ -221,12 +242,14 @@ def process_order(request):
 
 			customer_message += "\nThank you for shopping with us!"
 
+			# Send confirmation email to customer
 			send_mail(
 				customer_subject,
 				customer_message,
 				settings.DEFAULT_FROM_EMAIL,
 				[email],  # send to the customer
 				fail_silently=False,
+				connection=email_connection,
 			)
 
 			# Delete our cart
@@ -239,7 +262,6 @@ def process_order(request):
 			current_user = Profile.objects.filter(user__id=request.user.id)
 			# Delete shopping cart in database (old_cart field)
 			current_user.update(old_cart="")
-
 
 			messages.success(request, "Order Placed!")
 			return redirect('home')
@@ -265,11 +287,20 @@ def process_order(request):
 				else:
 					price = product.price
 
-				# Get quantity
-				for key,value in quantities().items():
+				# Get quantity + size
+				for key, value in quantities().items():
 					if int(key) == product.id:
+						qty = value['quantity']   # ✅ extract integer
+						size = value['size']      # ✅ extract shoe size
+
 						# Create order item
-						create_order_item = OrderItem(order_id=order_id, product_id=product_id, quantity=value, price=price)
+						create_order_item = OrderItem(
+							order_id=order_id,
+							product_id=product_id,
+							quantity=qty,          # ✅ now just number
+							size=size,             # ✅ store size
+							price=price
+						)
 						create_order_item.save()
 
 			# Delete our cart
@@ -278,11 +309,8 @@ def process_order(request):
 					# Delete the key
 					del request.session[key]
 
-
-
 			messages.success(request, "Order Placed!")
 			return redirect('home')
-
 
 	else:
 		messages.success(request, "Access Denied")

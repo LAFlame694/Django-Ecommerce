@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 
         <!-- Header-->
@@ -8,7 +7,7 @@
             <div class="container px-4 px-lg-5 my-5">
                 <div class="text-center text-white">
                     <h1 class="display-4 fw-bolder">Shop in style</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+                    <p class="lead fw-normal text-white-50 mb-0">With ShoeDrop</p>
                 </div>
             </div>
         </header>
@@ -32,7 +31,7 @@
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
-                                    <!-- Product name-->
+                                    <!-- Product name--> 
                                     <h5 class="fw-bolder">{{ product.name }}</h5>
                                     <!-- Sale -->
                 <div class="d-flex justify-content-center small text-warning mb-2">
@@ -43,10 +42,11 @@
 
                                     <!-- Product price-->
                                     <strike>
-                                    ${{ product.price }}
+                                    Ksh {{ product.price }}
                                     </strike>
                                     &nbsp;
-                                    ${{ product.sale_price }}
+                                    Ksh {{ product.sale_price }} <br>
+                                    
                                 </div>
                             </div>
                             <!-- Product actions-->

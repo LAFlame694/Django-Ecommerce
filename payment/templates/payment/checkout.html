@@ -31,12 +31,15 @@
                 {% endif %}
 
                 <br/>
-                <small>Quantity: 
-                {% for key, value in quantities.items %}
-                    {% if key == product.id|slugify %}
-                        {{ value }}
-                    {% endif %}
-                {% endfor %}</small>
+                <small>
+  {% for key, value in quantities.items %}
+    {% if key == product.id|stringformat:"s" %}
+      Quantity: {{ value.quantity }} <br/>
+      Size: {{ value.size }}
+    {% endif %}
+  {% endfor %}
+</small>
+
                 <br/><br/>
 
             {% endfor %}

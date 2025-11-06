@@ -33,8 +33,6 @@ def create_shipping(sender, instance, created, **kwargs):
 # Automate the profile thing
 post_save.connect(create_shipping, sender=User)
 
-
-
 # Create Order Model
 class Order(models.Model):
 	# Foreign Key
@@ -74,6 +72,7 @@ class OrderItem(models.Model):
 
 	quantity = models.PositiveBigIntegerField(default=1)
 	price = models.DecimalField(max_digits=7, decimal_places=2)
+	size = models.CharField(max_length=5, null=True, blank=True)
 
 
 	def __str__(self):

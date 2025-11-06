@@ -116,7 +116,8 @@ def category(request, foo):
 
 def product(request,pk):
 	product = Product.objects.get(id=pk)
-	return render(request, 'product.html', {'product':product})
+	sizes = Product.SHOE_SIZES
+	return render(request, 'product.html', {'product':product, "sizes":sizes})
 
 
 def home(request):

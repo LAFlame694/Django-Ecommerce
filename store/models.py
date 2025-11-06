@@ -72,9 +72,12 @@ class Product(models.Model):
 	is_sale = models.BooleanField(default=False)
 	sale_price = models.DecimalField(default=0, decimal_places=2, max_digits=6)
 
+	# shoe size stuff
+	SHOE_SIZES = [(str(i), str(i)) for i in range(37, 45)]
+	size = models.CharField(max_length=2, choices=SHOE_SIZES, default='37')
+
 	def __str__(self):
 		return self.name
-
 
 # Customer Orders
 class Order(models.Model):
