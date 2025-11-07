@@ -13,7 +13,7 @@ import ssl, certifi
 
 # Import Some Paypal Stuff
 from django.urls import reverse
-from paypal.standard.forms import PayPalPaymentsForm
+#from paypal.standard.forms import PayPalPaymentsForm
 from django.conf import settings
 import uuid # unique user id for duplictate orders
 

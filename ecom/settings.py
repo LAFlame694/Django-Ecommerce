@@ -1,25 +1,12 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-#from dotenv import load_dotenv
-
-import ssl, certifi
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load our environmental variables
 load_dotenv()
-
-
-
-
-# password DB
-DB_PASSWORD_YO = os.environ['DB_PASSWORD_YO']
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-x4m$gfeda-r+)u05g*bzm%8#_vz&8-wl^3epo45gqi#_eqwvtq'
@@ -30,12 +17,12 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1', # For local development
     'localhost', # For local development
-    'djangotest.com', # Custom domain (no https)
-    'djangotest.com', 
-    'django-ecommerce-production-81b6.up.railway.app', 
-    'https://django-ecommerce-production-81b6.up.railway.app'
 ]
-CSRF_TRUSTED_ORIGINS = ['https://djangotest.com', 'https://django-ecommerce-production-81b6.up.railway.app']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1',
+    'http://localhost',
+]
 
 # Application definition
 
@@ -69,7 +56,7 @@ ROOT_URLCONF = 'ecom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [], # you can add custom template dirs here later if needed
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
