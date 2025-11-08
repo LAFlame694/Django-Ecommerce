@@ -9,7 +9,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load our environmental variables
-#load_dotenv()
+load_dotenv()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-default-key')
@@ -43,7 +43,20 @@ INSTALLED_APPS = [
     'payment',
     'whitenoise.runserver_nostatic',
     'paypal.standard.ipn',
+    'cloudinary',
+    'cloudinary_storage',
 ]
+
+# cloudinary settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+# tell Django to use Cloudinary for storing media files
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
